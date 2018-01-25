@@ -1,0 +1,18 @@
+{
+  "name": "tweet-tracker",
+  "version": "1.0.0",
+  "description": "App for tracking twitter campaigns.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "express": "*",
+    "mongoose": "*",
+    "node-cron": "^1.2.1",
+    "twit": "^2.2.9"
+  },
+  "author": "Colin Casazza",
+  "license": "ISC"
+}
