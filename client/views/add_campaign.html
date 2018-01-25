@@ -1,0 +1,49 @@
+<div>
+  <a href="#/campaigns">
+    Go Back
+  </a>
+  <br>
+  <br>
+  <h1>Add New Campaign</h1>
+</div>
+<!-- Form Layout
+         --------------------------------------------------------------------------------------- -->
+<form ng-submit="addCampaign()">
+  <div class="form-row">
+    <div class="form-row-item full">
+      <p>Campaign Name</p>
+      <input type="text" class="form-control" ng-model="campaign.campaign_name" placeholder="Campaign Name">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-row-item full">
+      <p>Hashtags to track (seperated by comma)</p>
+      <input type="text" class="form-control" ng-model="campaign.campaign_tags" placeholder="Campaign Tags">
+    </div>
+  </div>
+
+
+  <div class="form-row">
+    <div class="form-row-item third">
+      <p>Start Date</p>
+      <input type="text" class="form-control" ng-model="campaign.start_date">
+    </div>
+
+    <div class="form-row-item third">
+      <p>End Date</p>
+      <input type="text" class="form-control" ng-model="campaign.end_date">
+    </div>
+
+    <h5>or</h5>
+
+    <div class="form-row-item third">
+      <p>Number of tweets</p>
+      <input type="text" class="form-control" ng-model="campaign.number_tweets">
+    </div>
+  </div>
+
+  <div class="form-row button">
+    <button type="submit" class="btn btn-default">Submit</button>
+  </div>
+</form>

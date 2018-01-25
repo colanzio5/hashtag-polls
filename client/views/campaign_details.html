@@ -1,0 +1,70 @@
+<a href="#/campaigns">
+    Go Back</a>
+
+<div class="table-2-section" ng-init="getCampaign()">
+    <h1>Campaign Name:
+        <span>{{campaign.campaign_name}}</span>
+    </h1>
+    <!-- Table Header -->
+    <div class="table-2-headers">
+        <div class="tracking">
+            <p>Tracking:
+                <span>{{campaign.campaign_tags}}</span>
+            </p>
+        </div>
+        <div class="date">
+            <p>Tracking:
+                <span>{{campaign.start_date}} - {{campaign.end_date}}</span>
+            </p>
+        </div>
+        <div class="total-tweets">
+            <p>Total Tweets:
+                <span>{{campaign.tweets.length}}</span>
+            </p>
+        </div>
+        <h6>
+            <a href="#/campaigns/edit/{{campaign._id}}">Edit</a> |
+            <a href="#" ng-click="removeCampaign(campaign._id)">Delete</a>
+        </h6>
+    </div>
+</div>
+<!-- Table 2 -->
+<div class="table-2 clearfix">
+    <div class="table-2-recents">
+        <div class="table-2-row  table-2-head">
+            Recent Tweets
+            <input id="query" ng-model="query" type="text" class="table-2-search" name="" placeholder="Search...">
+        </div>
+
+        <div class="table-2-row" ng-repeat="tweet in campaign.tweets | filter:query">
+            <div>
+                <img ng-src="{{ tweet.usr_img }}" />`
+            </div>
+            <div>
+                <p>{{tweet.username}} {{tweet.favorite_count.toString()}}</p>
+            </div>
+            <div>
+                <p>{{tweet.text}}
+                    <p></p>
+            </div>
+            <div>{{tweet.created_at}}</div>
+            <div>
+                <div ng-if="tweet.reply_count != 'undefined'" class="reply">
+                    <i class="fa fa-comment-o">{{tweet.reply_count}}</i>
+                </div>
+
+                <div ng-if="tweet.retweet_count != 'undefined'" class="retweet">
+                    <i class="fa fa-retweet"></i>{{tweet.retweet_count}}</i>
+                </div>
+                <div ng-if="tweet.favorite_count != 0" class="like">
+                    <i class="fa fa-heart-o">{{tweet.favorite_count}}</i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
