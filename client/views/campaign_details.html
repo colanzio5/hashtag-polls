@@ -28,6 +28,9 @@
         </h6>
     </div>
 </div>
+<!-- bootstrap table -->
+
+
 <!-- Table 2 -->
 <div class="table-2 clearfix">
     <div class="table-2-recents">
@@ -38,10 +41,10 @@
 
         <div class="table-2-row" ng-repeat="tweet in campaign.tweets | filter:query">
             <div>
-                <img ng-src="{{ tweet.usr_img }}" />`
+                <img ng-src="{{ tweet.user_profile_image_url }}" />
             </div>
             <div>
-                <p>{{tweet.username}} {{tweet.favorite_count.toString()}}</p>
+                <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
             </div>
             <div>
                 <p>{{tweet.text}}
@@ -49,16 +52,16 @@
             </div>
             <div>{{tweet.created_at}}</div>
             <div>
-                <div ng-if="tweet.reply_count != 'undefined'" class="reply">
+                <!-- <div ng-if="tweet.reply_count != 'undefined'" class="reply">
                     <i class="fa fa-comment-o">{{tweet.reply_count}}</i>
-                </div>
+                </div> -->
 
                 <div ng-if="tweet.retweet_count != 'undefined'" class="retweet">
                     <i class="fa fa-retweet"></i>{{tweet.retweet_count}}</i>
                 </div>
-                <div ng-if="tweet.favorite_count != 0" class="like">
+                <!-- <div ng-if="tweet.favorite_count != 0" class="like">
                     <i class="fa fa-heart-o">{{tweet.favorite_count}}</i>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

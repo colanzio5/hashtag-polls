@@ -13,7 +13,7 @@ mongoose.connect('mongodb://localhost/campaign-list');
 var db = mongoose.connection;
 
 app.get('/', (req, res) => {
-	res.send('Please use /api/books or /api/genres or /api/campaigns');
+	res.send('Please use /api/campaigns');
 });
 
 app.get('/api/campaigns', (req, res) => {
