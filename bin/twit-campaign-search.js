@@ -82,6 +82,8 @@ function search_for_tweets(campaign) {
                                 user_location: tweet.user.location,
                                 user_lang: tweet.user.lang,
                                 user_profile_image_url: tweet.user.profile_image_url,
+
+                                // extra parameters returned by twit api
                                 // user: {
                                 //     profile_background_image_url: tweet.user.profile_background_color,
                                 //     profile_link_color: tweet.user.profile_link_color,
@@ -117,6 +119,7 @@ function search_for_tweets(campaign) {
                                 //     notifications: tweet.user.notifications,
                                 //     utc_offset: tweet.user.utc_offset
                                 // },
+
                                 geo: tweet.geo,
                                 retweet_count: tweet.retweet_count,
                                 id: tweet.id,
@@ -127,8 +130,8 @@ function search_for_tweets(campaign) {
                     },
                     function (err, callback) {
                         if (err) console.log(err)
-                    });
-            }
-        });
-    })
-}
+                    });//end push to database
+            }//end if
+        });//end data.statuses.forEach
+    });//end twit search
+}//end main function
