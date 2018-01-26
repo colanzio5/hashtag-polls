@@ -1,5 +1,5 @@
 
-<div class="table-1-section clearfix" ng-init="getCampaigns()">
+<div class="clearfix" ng-init="getCampaigns()">
     <a href="#/campaigns/add/" class="table-1-create-button">Create New Campaign</a>
     <br>    
     <!-- The Table -->
@@ -10,15 +10,15 @@
             <div>Start Date</div>
             <div>End Date</div>
             <div>Total Tweets</div>
-            <div>Status</div>
+            <div></div>
         </div>
         <div class="table-1-row" ng-repeat="campaign in campaigns">
             <div>
                 <a href="#/campaigns/details/{{campaign._id}}">{{campaign.campaign_name}}</a>
             </div>
             <div>{{campaign.campaign_tags}}</div>
-            <div>{{campaign.start_date}}</div>
-            <div>{{campaign.end_date}}</div>
+            <div>{{ campaign.start_date | date:'medium' }}</div>
+            <div>{{campaign.end_date | date:'medium' }}</div>
             <div>{{campaign.tweets.length}}</div>
             <div>
                 <a href="#/campaigns/edit/{{campaign._id}}">Edit</button>

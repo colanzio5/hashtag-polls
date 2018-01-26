@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp');
+var myApp = angular.module('tweet-tracker');
 
 myApp.controller('CampaignsController', ['$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams){
 	console.log('CampaignsController loaded...');

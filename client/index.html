@@ -1,7 +1,6 @@
-<html ng-app="myApp">
-
+<html ng-app="tweet-tracker">
 <head>
-  <title>TweetTracker</title>
+  <title>Tweet-tracker</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
     crossorigin="anonymous">
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
@@ -9,10 +8,12 @@
     rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
+
+  <!-- nav bar -->
   <nav class="navbar navbar-default">
     <header>
+      <!-- logo/title -->
       <div class="header-top">
         <a href="index.html">
           <div class="header-logo">
@@ -21,37 +22,29 @@
           </div>
         </a>
       </div>
+
+      
+      <!--link bar-->
       <div class="header-links">
         <ul>
           <li>
             <a href="#/">Home</a>
           </li>
           <li>
-            <a href="#/campaigns/">Campaign List</a>
-          </li>
-          <li>
             <a href="#/campaigns/add">New Campaign</a>
           </li>
           <li>
-            <a href="">Sentiment Analysis</a>
+            <a href="#/campaigns/">Campaign List</a>
           </li>
         </ul>
       </div>
-    </header>
-    <!-- Main Section -->
-  <div class="main-section clearfix">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12">
-            <div ng-view></div>
-          </div>
-        </div>
+      <!-- main section scoped -->
+      <div class="main-section clearfix">
+        <div ng-view></div>
       </div>
-    </div>
-  
+    </header>
   </nav>
 
-  
 
   <!-- /.container -->
   <script src="/bower_components/jquery/dist/jquery.js"></script>

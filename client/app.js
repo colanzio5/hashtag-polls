@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp',['ngRoute']);
+var myApp = angular.module('tweet-tracker',['ngRoute']);
 
 myApp.config(function($routeProvider){
 	$routeProvider.when('/', {
