@@ -1,16 +1,15 @@
 const cron = require('node-cron');
 const mongoose = require('mongoose')
 const Twit = require('twit')
-const keys = require('./bin/creds.js');
 
 const T = new Twit({
-    consumer_key: keys.twitterCreds.consumer_key,
-    consumer_secret: keys.twitterCreds.consumer_secret,
-    access_token: keys.twitterCreds.access_token,
-    access_token_secret: keys.twitterCreds.access_token_secret,
+    consumer_key: '3442mFKp54ciOmVUsA5oVOdVT',
+    consumer_secret: 'lfNpSyDrShwGTCppH9SYlC9QP3TFQdNXLw7JJUyXMbrBuiusVS',
+    access_token: '916052172927787008-JNiH0YAniHRyJ4fwzwvjAlgUwCs3HM3',
+    access_token_secret: 'ElpdbAQPucBxUOG5e24p9v0doB5zn2DwUEI1NJg0DsYqx',
 });
 
-Campaign = require('./models/campaign');
+Campaign = require('../models/campaign');
 const db = mongoose.connection;
 mongoose.connect('mongodb://localhost/campaign-list');
 
@@ -130,8 +129,8 @@ function search_for_tweets(campaign) {
                     },
                     function (err, callback) {
                         if (err) console.log(err)
-                    });//end push to database
-            }//end if
-        });//end data.statuses.forEach
-    });//end twit search
-}//end main function
+                    }); //end push to database
+            } //end if
+        }); //end data.statuses.forEach
+    }); //end twit search
+} //end main function
