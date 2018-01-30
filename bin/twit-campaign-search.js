@@ -128,9 +128,9 @@ function search_for_tweets(campaign) {
                         }
                     },
                     function (err, callback) {
-                        if (err) console.log(err)
-                    }); //end push to database
-            } //end if
-        }); //end data.statuses.forEach
-    }); //end twit search
-} //end main function
+                        if (err) console.log("Error w/ database update" + err);
+                    });
+            }
+        });
+    });
+}
