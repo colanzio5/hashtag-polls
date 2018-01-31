@@ -1,54 +1,67 @@
-function main() {
-    const cron = require('node-cron');
-    const mongoose = require('mongoose')
-    const Twit = require('twit')
+const cron = require('node-cron');
+const mongoose = require('mongoose')
+const Twit = require('twit')
 
-    const T = new Twit({
-        consumer_key: '3442mFKp54ciOmVUsA5oVOdVT',
-        consumer_secret: 'lfNpSyDrShwGTCppH9SYlC9QP3TFQdNXLw7JJUyXMbrBuiusVS',
-        access_token: '916052172927787008-JNiH0YAniHRyJ4fwzwvjAlgUwCs3HM3',
-        access_token_secret: 'ElpdbAQPucBxUOG5e24p9v0doB5zn2DwUEI1NJg0DsYqx',
+const T = new Twit({
+    consumer_key: '3442mFKp54ciOmVUsA5oVOdVT',
+    consumer_secret: 'lfNpSyDrShwGTCppH9SYlC9QP3TFQdNXLw7JJUyXMbrBuiusVS',
+    access_token: '916052172927787008-JNiH0YAniHRyJ4fwzwvjAlgUwCs3HM3',
+    access_token_secret: 'ElpdbAQPucBxUOG5e24p9v0doB5zn2DwUEI1NJg0DsYqx',
+});
+
+Campaign = require('../models/campaign');
+Tweet = require('../models/tweet');
+
+const db = mongoose.connection;
+mongoose.connect('mongodb://localhost/campaign-list');
+script();
+function script() {
+    //run once 
+    query_campaigns();
+    cron.schedule('* * * * *', function () {
+        console.log("Chron Job Started!")
+        try {
+            query_campaigns();
+        } catch (e) {
+            console.log(e)
+        }
     });
 
-    Campaign = require('../models/campaign');
-    Tweet = require('../models/tweet');
-    const db = mongoose.connection;
-    mongoose.connect('mongodb://localhost/campaign-list');
+    function query_campaigns() {
+        //run immediately 
+        Campaign.getCampaigns((err, campaigns) => {
+            if (err)
+                throw err;
+            campaigns.forEach(campaign => {
+                //get array of tweets for this campaign
+                console.log("searching for campaign id:" + campaign._id);
+                Tweet.getTweetByCampaignID(campaign._id, (err, tweet) => {
+                    if (err) throw err;
+                    //check if campaign has matching tweet object in database
+                    if (tweet === null) {
+                        //create new db tweetlist entry if no entry
+                        let new_tweet = {
+                            "_id": campaign._id,
+                            "tweets": []
+                        };
+                        Tweet.addTweet(new_tweet, (err, tweet) => {
+                            if (err) {
+                                throw err;
+                            }
+                            console.log("New Tweet Object Added: " + new_tweet._id);
+                            //run search on new tweet object
+                            main_search(campaign, tweet);
+                        });
 
-    //run immediately 
-    Campaign.getCampaigns((err, campaigns) => {
-        if (err)
-            throw err;
-        campaigns.forEach(campaign => {
-            //get array of tweets for this campaign
-            console.log("searching for campaign id:" + campaign._id);
-            Tweet.getTweetByCampaignID(campaign._id, (err, tweet) => {
-                if (err) throw err;
-                //check if campaign has matching tweet object in database
-                if (tweet === null) {
-                    //create new db tweetlist entry if no entry
-                    let new_tweet = {
-                        "_id": campaign._id,
-                        "tweets": []
-                    };
-                    Tweet.addTweet(new_tweet, (err, tweet) => {
-                        if (err) {
-                            throw err;
-                        }
-                        console.log("New Tweet Object Added: " + new_tweet._id);
-                        //run search on new tweet object
+
+                    } else {
+                        //current tweet object found, run search on existing tweet object
                         main_search(campaign, tweet);
-                    });
-
-
-                } else {
-                    //current tweet object found, run search on existing tweet object
-                    main_search(campaign, tweet);
-                }
+                    }
+                });
             });
         });
-    });
-
+    }
 
     function main_search(campaign, tweet_list) {
         console.log("(Campaign ID, Tweet ID)::( " + campaign._id + " || " + tweet_list._id + " )");
@@ -104,5 +117,4 @@ function main() {
             });
         });
     }
-};
-main();
+}

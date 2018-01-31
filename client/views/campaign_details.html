@@ -37,7 +37,7 @@
             <input id="query" ng-model="query" type="text" class="table-2-search" name="" placeholder="Search...">
         </div>
 
-        <div class="table-2-row" ng-repeat="tweet in campaign.tweets | filter:query">
+        <div class="table-2-row" ng-repeat="tweet in tweets | filter:query">
             <div>
                 <img ng-src="{{ tweet.user_profile_image_url }}" />
             </div>
