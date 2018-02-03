@@ -3,7 +3,7 @@ var myApp = angular.module('tweet-tracker',['ngRoute']);
 myApp.config(function($routeProvider){
 	$routeProvider.when('/', {
 		controller:'CampaignsController',
-		templateUrl: 'views/home.html'
+		templateUrl: 'views/campaigns.html'
 	})
 	.when('/campaigns', {
 		controller:'CampaignsController',

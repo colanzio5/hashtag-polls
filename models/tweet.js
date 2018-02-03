@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 var tweetSchema = new mongoose.Schema({
     _id: String,
-    db_ref: String,
     tweets: [{
         contributors: String,
         created_at: String,

@@ -8,10 +8,11 @@
   },
   "dependencies": {
     "body-parser": "*",
-    "express": "*",
+    "express": "^4.16.2",
     "mongoose": "*",
     "node-cron": "^1.2.1",
-    "twit": "^2.2.9"
+    "twit": "^2.2.9",
+    "winston": "^2.4.0"
   },
   "author": "Colin Casazza",
   "license": "ISC"

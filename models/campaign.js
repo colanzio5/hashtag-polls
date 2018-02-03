@@ -19,7 +19,11 @@ const campaignSchema = mongoose.Schema({
 		required: false
 	},
 	number_tweets: {
-		type: String,
+		type: Number,
+		required: false
+	},
+	max_tweets: {
+		type: Number,
 		required: false
 	},
 	tweet_db_id: String
@@ -38,6 +42,7 @@ module.exports.getCampaignByID = (id, callback) => {
 
 // Add Campaign
 module.exports.addCampaign = (campaign, callback) => {
+	campaign.number_tweets = 0;
 	campaign.campaign_tags = campaign.campaign_tags.split(',');
 	Campaign.create(campaign, callback);
 }
@@ -52,7 +57,8 @@ module.exports.updateCampaign = (id, campaign, options, callback) => {
 		campaign_tags: campaign.campaign_tags,
 		start_date: campaign.start_date,
 		end_date: campaign.end_date,
-		number_tweets: campaign.number_tweets
+		number_tweets: campaign.number_tweets,
+		max_tweets: campaign.max_tweets
 	}
 	Campaign.findOneAndUpdate(query, update, options, callback);
 }

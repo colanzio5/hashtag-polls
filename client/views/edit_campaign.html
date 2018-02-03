@@ -6,19 +6,31 @@
   <div class="panel-body">
     <div class="row">
       <div class="col-md-12">
-      <form ng-submit="updateCampaign()" ng-init="getCampaign()">
-        <div class="form-group">
-          <label>Campaign Name</label>
-          <input type="text" class="form-control" ng-model="campaign.campaign_name" placeholder="Campaign Name">
-        </div>
-        <div class="form-group">
-          <label>Campaign Tags</label>
-          <input type="text" class="form-control" ng-model="campaign.campaign_tags" placeholder="Campaign Tags">
-        </div>
-        <a href="#" ng-click="removeCampaign(campaign._id)">Delete</a>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
-    </div>
+        <form ng-submit="updateCampaign()" ng-init="getCampaign()">
+          <div class="form-group">
+            <label>Campaign Name</label>
+            <input type="text" class="form-control" ng-model="campaign.campaign_name" placeholder="Campaign Name">
+          </div>
+          <div class="form-group">
+            <label>Campaign Tags</label>
+            <input type="text" class="form-control" ng-model="campaign.campaign_tags" placeholder="Campaign Tags">
+          </div>
+          <div class="form-group">
+              <label>Start Date</label>
+              <input type="text" class="form-control" ng-model="campaign.start_date" placeholder="Start Date">
+            </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="text" class="form-control" ng-model="campaign.end_date" placeholder="End Date">
+          </div>
+          <div class="form-group">
+            <label>Max Tweets</label>
+            <input type="text" class="form-control" ng-model="campaign.max_tweets" placeholder="Max Tweets">
+          </div>
+          <a href="#" ng-click="removeCampaign(campaign._id)">Delete</a>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>

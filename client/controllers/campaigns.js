@@ -13,9 +13,11 @@ myApp.controller('CampaignsController', ['$scope', '$http', '$location', '$route
 		var id = $routeParams.id;
 		$http.get('/api/campaigns/' + id).success(function (response) {
 			$scope.campaign = response;
+			let now = new Date();
 		});
 		$http.get('/api/tweets/' + id).success(function (response) {
 			$scope.tweets = response.tweets;
+			$scope.tweet_count = $scope.tweets.length;
 			console.log($scope.tweets)
 		});
 	}

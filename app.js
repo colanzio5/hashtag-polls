@@ -1,8 +1,22 @@
 const express = require('express');
 const app = express();
+
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const script = require('./bin/chron-script');
+const winston = require('winston')
+
+var logger = new (winston.Logger)({
+	transports: [
+	  new (winston.transports.Console)({ json: false, timestamp: true }),
+	  new winston.transports.File({ filename: __dirname + '/debug.log', json: false })
+	],
+	exceptionHandlers: [
+	  new (winston.transports.Console)({ json: false, timestamp: true }),
+	  new winston.transports.File({ filename: __dirname + '/exceptions.log', json: false })
+	],
+	exitOnError: false
+  });
+
 app.use(express.static(__dirname + '/client'));
 app.use(bodyParser.json());
 
@@ -13,7 +27,9 @@ Tweet = require('./models/tweet')
 mongoose.connect('mongodb://localhost/campaign-list');
 var db = mongoose.connection;
 
-//tweet list api
+/**
+ * TWEET LIST API
+ */
 app.get('/api/tweets', (req, res) => {
 	Tweet.getCampaignTweets((err, tweet) => {
 		if (err)
@@ -22,21 +38,20 @@ app.get('/api/tweets', (req, res) => {
 	});
 });
 
-app.post('/api/tweets', (req, res) => {
-	var tweet = req.body;
-	console.log(tweet)
-	Tweet.addTweet(tweet, (err, tweet) => {
-		if (err) {
-			throw err;
-		}
-		res.json(tweet);
-	});
-});
-
 app.get('/api/tweets/:_id', (req, res) => {
 	Tweet.getTweetByCampaignID(req.params._id, (err, tweet) => {
 		if (err)
 			throw err;
+		res.json(tweet);
+	});
+});
+
+app.post('/api/tweets', (req, res) => {
+	var tweet = req.body;
+	Tweet.addTweet(tweet, (err, tweet) => {
+		if (err) {
+			throw err;
+		}
 		res.json(tweet);
 	});
 });
@@ -52,7 +67,9 @@ app.delete('/api/tweets/:_id', (req, res) => {
 });
 
 
-//campaign list api
+/**
+ * CAMPAIGN LIST API
+ */
 app.get('/api/campaigns', (req, res) => {
 	Campaign.getCampaigns((err, campaigns) => {
 		if (err)
@@ -71,7 +88,7 @@ app.get('/api/campaigns/:_id', (req, res) => {
 
 app.post('/api/campaigns', (req, res) => {
 	var campaign = req.body;
-	console.log(campaign)
+
 	Campaign.addCampaign(campaign, (err, campaign) => {
 		if (err) {
 			throw err;
@@ -100,11 +117,6 @@ app.delete('/api/campaigns/:_id', (req, res) => {
 		res.json(campaign);
 	});
 });
-
-//service worker handle
-app.get('/api/refresh/', (req,res) => {
-
-})
 
 app.listen(3000);
 console.log('Running on port 3000...');

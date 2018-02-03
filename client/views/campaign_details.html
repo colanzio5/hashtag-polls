@@ -5,6 +5,7 @@
     <h1>Campaign Name:
         <span>{{campaign.campaign_name}}</span>
     </h1>
+    <div ng-show="is_running"><h1>Campaign is Running</h1></div>
     <!-- Table Header -->
     <div class="table-2-headers">
         <div class="tracking">
@@ -14,12 +15,15 @@
         </div>
         <div class="date">
             <p>Tracking:
-                <span>{{campaign.start_date}} - {{campaign.end_date}}</span>
+                <span>{{campaign.start_date | date:"MM/dd/yyyy"}} - {{campaign.end_date | date:"MM/dd/yyyy"}}</span>
             </p>
         </div>
         <div class="total-tweets">
-            <p>Total Tweets:
-                <span>{{campaign.tweets.length}}</span>
+            <p>Current Tweets:
+                {{campaign.number_tweets}}
+            </p>
+            <p>Max Tweets:
+                {{campaign.max_tweets}}
             </p>
         </div>
         <h6>
