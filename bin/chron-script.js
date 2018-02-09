@@ -43,15 +43,8 @@ function query_campaigns() {
 
         campaigns.forEach(campaign => {
             //get tweet object for this campaign
-            if ( campaign.number_tweets >= campaign.max_tweets){
-                console.log("campaign max tweets exceeded!");
-            }
-            if ((now >= campaign.end_date)) {
-                console.log("campaign has ended!");
-            } 
-            if ((now <= campaign.start_date)) {
-                console.log("campaign has not started!");
-            } else {
+            console.log("\n number tweets: " + campaign.number_tweets + " max tweets: " + campaign.max_tweets);
+            if((now >= campaign.start_date) && (now >= campaign.end_date) && (campaign.number_tweets <= campaign.max_tweets)) {
                 Tweet.getTweetByCampaignID(campaign._id, (err, tweet) => {
                     if (err) throw err;
                     //check if campaign has matching tweet object in database

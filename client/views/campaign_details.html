@@ -1,3 +1,4 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
 <a href="#/campaigns">
     Go Back</a>
 
@@ -5,7 +6,9 @@
     <h1>Campaign Name:
         <span>{{campaign.campaign_name}}</span>
     </h1>
-    <div ng-show="is_running"><h1>Campaign is Running</h1></div>
+    <div ng-show="is_running">
+        <h1>Campaign is Running</h1>
+    </div>
     <!-- Table Header -->
     <div class="table-2-headers">
         <div class="tracking">
@@ -19,50 +22,45 @@
             </p>
         </div>
         <div class="total-tweets">
-            <p>Current Tweets:
-                {{campaign.number_tweets}}
+            <p>Current Tweets: {{campaign.number_tweets}}
             </p>
-            <p>Max Tweets:
-                {{campaign.max_tweets}}
+            <p>Max Tweets: {{campaign.max_tweets}}
             </p>
         </div>
         <h6>
             <a href="#/campaigns/edit/{{campaign._id}}">Edit</a> |
-            <a href="#" ng-click="removeCampaign(campaign._id)">Delete</a>
+            <a href="#" ng-click="removeCampaign(campaign._id)">Delete</a> |
+            <a href="" ng-click="export_tweets()">Export</a>
         </h6>
     </div>
 </div>
 
 <!-- Table 2 -->
-<div class="table-2 clearfix">
-    <div class="table-2-recents">
-        <div class="table-2-row  table-2-head">
-            Recent Tweets
-            <input id="query" ng-model="query" type="text" class="table-2-search" name="" placeholder="Search...">
-        </div>
+<div class="table-2-recents exportable">
+    <div class="table-2-row  table-2-head">
+        Recent Tweets
+        <input id="query" ng-model="query" type="text" class="table-2-search" name="" placeholder="Search...">
+    </div>
 
-        <div class="table-2-row" ng-repeat="tweet in tweets | filter:query">
-            <div>
-                <img ng-src="{{ tweet.user_profile_image_url }}" />
-            </div>
-            <div>
-                <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
-            </div>
-            <div>
-                <p>{{tweet.text}}
-                    <p></p>
-            </div>
-            <div>{{tweet.created_at}}</div>
-            <div>
-                <div ng-if="tweet.retweet_count != 'undefined'" class="retweet">
-                    <i class="fa fa-retweet"></i>{{tweet.retweet_count}}</i>
-                </div>
+    <div class="table-2-row" ng-repeat="tweet in tweets | filter:query">
+        <div>
+            <img ng-src="{{ tweet.user_profile_image_url }}" />
+        </div>
+        <div>
+            <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
+        </div>
+        <div>
+            <p>{{tweet.text}}
+                <p></p>
+        </div>
+        <div>{{tweet.created_at}}</div>
+        <div>
+            <div ng-if="tweet.retweet_count != 'undefined'" class="retweet">
+                <i class="fa fa-retweet"></i>{{tweet.retweet_count}}</i>
             </div>
         </div>
     </div>
 </div>
 </div>
-
-
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

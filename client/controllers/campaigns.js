@@ -18,9 +18,18 @@ myApp.controller('CampaignsController', ['$scope', '$http', '$location', '$route
 		$http.get('/api/tweets/' + id).success(function (response) {
 			$scope.tweets = response.tweets;
 			$scope.tweet_count = $scope.tweets.length;
-			console.log($scope.tweets)
 		});
 	}
+
+	$scope.export_tweets = function () {
+		var s = $scope.tweets
+		var jsons=[];
+		for (var i=s.length;i--;) jsons[i]=JSON.stringify(s[i]);
+		var blob = new Blob( jsons, {
+			type: "text/plain;charset=utf-8"
+		});
+		saveAs(blob, "tweet_list.txt");
+	} 
 
 	$scope.addCampaign = function () {
 		$http.post('/api/campaigns/', $scope.campaign).success(function (response) {
