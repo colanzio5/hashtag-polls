@@ -16,12 +16,9 @@ const db = mongoose.connection;
 mongoose.connect('mongodb://localhost/campaign-list');
 script();
 
-
 function script() {
-
     //run once
     query_campaigns();
-
     //start chron
     cron.schedule('* * * * *', function () {
         console.log("Chron Job Started!")
@@ -36,40 +33,60 @@ function script() {
 function query_campaigns() {
     //run immediately 
     Campaign.getCampaigns((err, campaigns) => {
-        if (err) {
+        if (err)
             console.log(err);
-        }
         let now = new Date();
-
         campaigns.forEach(campaign => {
-            //get tweet object for this campaign
-            console.log("\n number tweets: " + campaign.number_tweets + " max tweets: " + campaign.max_tweets);
-            if((now >= campaign.start_date) && (now >= campaign.end_date) && (campaign.number_tweets <= campaign.max_tweets)) {
-                Tweet.getTweetByCampaignID(campaign._id, (err, tweet) => {
-                    if (err) throw err;
-                    //check if campaign has matching tweet object in database
-                    if (tweet === null) {
-                        //create new db tweetlist entry if no entry
-                        let new_tweet = {
-                            "_id": campaign._id,
-                            "tweets": []
-                        };
-                        Tweet.addTweet(new_tweet, (err, tweet) => {
-                            if (err) {
-                                throw err;
-                            }
-                            console.log("New Tweet Object Added: " + new_tweet._id);
-                            //run search on new tweet object
-                            main_search(campaign, tweet);
-                        });
-                    } else {
-                        //current tweet object found, run search on existing tweet object
-                        main_search(campaign, tweet);
-                    }
-                });
+            //here we determin if a campaign has reached a tweet limit or date limit
+            if ( typeof campaign.max_tweets !== 'undefined' && campaign.max_tweets ){
+                if(campaign.max_tweets <= campaign.number_tweets){
+                    console.log("too many tweets! " + campaign.campaign_name);
+                    return;
+                }
             }
+            if ( typeof campaign.start_date !== 'undefined' && campaign.start_date ){
+                if(campaign.start_date >= now) {
+                    console.log("campaign has not started "+ campaign.campaign_name);
+                    return;
+                }
+            }
+            if ( typeof campaign.end_date !== 'undefined' && campaign.end_date ){
+                if(campaign.end_date <= now){ 
+                    console.log("campaign has ended "+ campaign.campaign_name);
+                    return;    
+                }
+            }
+            console.log("no invalid limits found, running search on " + campaign.campaign_name)
+            console.log("---end campaign---\n\n\n");
+
+            Tweet.getTweetByCampaignID(campaign._id, (err, tweet) => {
+                if (err) throw err;
+                //check if campaign has matching tweet object in database
+                if (tweet === null) {
+                    //create new db tweetlist entry if no entry
+                    let new_tweet = {
+                        "_id": campaign._id,
+                        "tweets": []
+                    };
+                    Tweet.addTweet(new_tweet, (err, tweet) => {
+                        if (err) {
+                            throw err;
+                        }
+                        console.log("New Tweet Object Added: " + new_tweet._id);
+                        //run search on new tweet object
+                        main_search(campaign, tweet);
+                    });
+                } else {
+                    //current tweet object found, run search on existing tweet object
+                    main_search(campaign, tweet);
+                }
+            });
         });
     });
+}
+
+function current_campaign(campaign, tweet_list){
+    console.log('search ran');
 }
 
 function main_search(campaign, tweet_list) {
