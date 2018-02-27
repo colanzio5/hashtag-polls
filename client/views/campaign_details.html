@@ -42,25 +42,36 @@
         <input id="query" ng-model="query" type="text" class="table-2-search" name="" placeholder="Search...">
     </div>
 
-    <div class="table-2-row" ng-repeat="tweet in tweets | filter:query">
-        <div>
-            <img ng-src="{{ tweet.user_profile_image_url }}" />
-        </div>
-        <div>
-            <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
-        </div>
-        <div>
-            <p>{{tweet.text}}
-                <p></p>
-        </div>
-        <div>{{tweet.created_at}}</div>
-        <div>
-            <div ng-if="tweet.retweet_count != 'undefined'" class="retweet">
-                <i class="fa fa-retweet"></i>{{tweet.retweet_count}}</i>
+
+    <ul>
+        <li>
+            <div class="table-2-row" dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query">
+                <div>
+                    <img ng-src="{{ tweet.user_profile_image_url }}" />
+                </div>
+                <div>
+                    <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
+                </div>
+                <div>
+                    <p>{{tweet.text}}
+                        <p></p>
+                </div>
+                <div>{{tweet.created_at}}</div>
+                <div>
+                    <div ng-if="tweet.retweet_count != 'undefined'" class="retweet">
+                        <i class="fa fa-retweet"></i>{{tweet.retweet_count}}</i>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </li>
+    </ul>
+
+    <dir-pagination-controls [max-size="" ] [direction-links="" ] [boundary-links="" ] [on-page-change="" ] [pagination-id=""
+        ] [template-url="" ] [auto-hide="" ]>
+    </dir-pagination-controls>
 </div>
 </div>
+
+
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

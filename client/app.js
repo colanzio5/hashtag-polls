@@ -1,4 +1,4 @@
-var myApp = angular.module('tweet-tracker',['ngRoute']);
+var myApp = angular.module('tweet-tracker',['ngRoute', 'angularUtils.directives.dirPagination']);
 
 myApp.config(function($routeProvider){
 	$routeProvider.when('/', {
