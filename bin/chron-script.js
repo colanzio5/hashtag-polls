@@ -43,13 +43,22 @@ function script() {
                 //here we determin if a campaign has reached a tweet limit or date limit
                 // return if expired or invalid
                 if ( typeof campaign.max_tweets !== 'undefined' && campaign.max_tweets ){
-                    if(campaign.max_tweets <= campaign.number_tweets) return;
+                    if(campaign.max_tweets <= campaign.number_tweets){ 
+                        console.log('err: max');
+                        return; 
+                    }
                 }
                 if ( typeof campaign.start_date !== 'undefined' && campaign.start_date ){
-                    if(campaign.start_date >= now) return;
+                    if(campaign.start_date >= now){ 
+                        console.log('err: start')
+                        return; 
+                    }
                 }
                 if ( typeof campaign.end_date !== 'undefined' && campaign.end_date ){
-                    if(campaign.end_date <= now) return;
+                    if(campaign.end_date <= now){ 
+                        console.log('err: end')
+                        return; 
+                    }
                 }
     
                 //if not invalid continue with search
