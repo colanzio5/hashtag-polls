@@ -47,7 +47,7 @@
         <li>
             <div class="table-2-row" dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query">
                 <div>
-                    <img ng-src="{{ (tweet.user_profile_image_url }}" />
+                    <img ng-src="{{ tweet.user_profile_image_url }}" />
                 </div>
                 <div>
                     <p>{{(tweet.user_name}} {{(tweet.user_screen_name}}</p>
@@ -63,7 +63,6 @@
                     </div>
                 </div>
             </div>
-            <ng-template #loading>Loading Tweets...</ng-template>
         </li>
     </ul>
 
