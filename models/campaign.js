@@ -24,7 +24,7 @@ const campaignSchema = mongoose.Schema({
 	},
 	max_tweets: {
 		type: Number,
-		required: false
+		default: 20000
 	},
 	tweet_db_id: String
 });

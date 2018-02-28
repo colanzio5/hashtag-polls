@@ -102,9 +102,9 @@ function script() {
     
         //run a search using the campaign's tags
         T.get('search/tweets', {
-            q: campaign.campaign_tags
+            q: campaign.campaign_tags,
         }, function (err, data, response) {
-            if (err) throw err;
+            if (err) console.log(err);
     
             //cycle through list of tweets returned from search,
             //add new tweets (not listed in current_tweet_ids) to campaign's tweet list
