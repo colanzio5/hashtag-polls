@@ -45,7 +45,7 @@
 
     <ul>
         <li>
-            <div class="table-2-row" *ngIf="tweets | async; let tweets; else loading" dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query">
+            <div class="table-2-row" dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query">
                 <div>
                     <img ng-src="{{ (tweet.user_profile_image_url }}" />
                 </div>
