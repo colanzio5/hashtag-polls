@@ -37,8 +37,8 @@ function script() {
             let now = new Date();
             campaigns.forEach(campaign => {
 
-                console.log("CAMPAIGN DETAILS: (startdate, enddate, now, maxtweets, startdate >? now, enddate <? now")
-                console.log("(" + campaign.start_date + ", " + campaign.end_date + ", " + now + ", " + (campaign.start_date >= now) + ", " + (campaign.end_date <= now) + ")");
+                console.log("CAMPAIGN DETAILS: name + (startdate, enddate, now, maxtweets, startdate >? now, enddate <? now")
+                console.log(campaign.campaign_name + "(" + campaign.start_date + ", " + campaign.end_date + ", " + now + ", " + (campaign.start_date >= now) + ", " + (campaign.end_date <= now) + ")");
     
                 //here we determin if a campaign has reached a tweet limit or date limit
                 // return if expired or invalid
