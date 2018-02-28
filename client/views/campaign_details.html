@@ -50,15 +50,15 @@
                     <img ng-src="{{ tweet.user_profile_image_url }}" />
                 </div>
                 <div>
-                    <p>{{(tweet.user_name}} {{(tweet.user_screen_name}}</p>
+                    <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
                 </div>
                 <div>
-                    <p>{{(tweet.text}}
+                    <p>{{tweet.text}}
                         <p></p>
                 </div>
-                <div>{{(tweet.created_at}}</div>
+                <div>{{tweet.created_at}}</div>
                 <div>
-                    <div ng-if="(tweet.retweet_count != 'undefined'" class="retweet">
+                    <div ng-if="tweet.retweet_count != 'undefined'" class="retweet">
                         <i class="fa fa-retweet"></i>{{tweet.retweet_count}}</i>
                     </div>
                 </div>
