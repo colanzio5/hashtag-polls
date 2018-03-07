@@ -122,19 +122,14 @@ function script() {
             });
 
             // //all new tweets pulled in, update analytics here
-            // let n = Tweet.count({
-            //     "_campaignid": campaign._id
-            // }, (n) => {
-            //     return n
-            // });
-            // Campaign.findByIdAndUpdate(campaign._id, {
-            //     $set: {
-            //         //length of tweets array after new tweets added
-            //         "number_tweets": n
-            //     }
-            // }, (err, res) => {
-            //     if (err) throw err;
-            // });
+            Campaign.findByIdAndUpdate(campaign._id, {
+                $set: {
+                    //length of tweets array after new tweets added
+                    "number_tweets": current_tweets.length
+                }
+            }, (err, res) => {
+                if (err) throw err;
+            });
         });
     }
 }
