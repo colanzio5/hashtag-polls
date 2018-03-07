@@ -1,33 +1,32 @@
 const mongoose = require('mongoose');
 var tweetSchema = new mongoose.Schema({
     _id: String,
-    tweets: [{
-        contributors: String,
-        created_at: String,
-        favorited: Boolean,
-        geo: String,
-        id: Number,
-        id_str: String,
-        in_reply_to_screen_name: String,
-        in_reply_to_status_id: Number,
-        in_reply_to_status_id_str: String,
-        in_reply_to_user_id: String,
-        in_reply_to_user_id_str: String,
-        retweet_count: Number,
-        retweeted: Boolean,
-        source: String,
-        text: String,
-        truncated: Boolean,
-        user_id_str: String,
-        user_lang: String,
-        user_location: String,
-        user_name: String,
-        user_profile_background_image_url: String,
-        user_profile_image_url: String,
-        user_screen_name: String,
-        user_url: String
-    }]
-  });
+    _campaignid: String,
+    contributors: String,
+    created_at: String,
+    favorited: Boolean,
+    geo: String,
+    id: Number,
+    id_str: String,
+    in_reply_to_screen_name: String,
+    in_reply_to_status_id: Number,
+    in_reply_to_status_id_str: String,
+    in_reply_to_user_id: String,
+    in_reply_to_user_id_str: String,
+    retweet_count: Number,
+    retweeted: Boolean,
+    source: String,
+    text: String,
+    truncated: Boolean,
+    user_id_str: String,
+    user_lang: String,
+    user_location: String,
+    user_name: String,
+    user_profile_background_image_url: String,
+    user_profile_image_url: String,
+    user_screen_name: String,
+    user_url: String
+});
 
 const Tweet = module.exports = mongoose.model('Tweet', tweetSchema);
 module.exports.getCampaignTweets = (callback, limit) => {
@@ -35,19 +34,19 @@ module.exports.getCampaignTweets = (callback, limit) => {
 }
 
 module.exports.addTweet = (tweet, callback) => {
-	Tweet.create(tweet, callback);
+    Tweet.create(tweet, callback);
 }
 
-module.exports.getTweetByCampaignID = (id, callback) => {
-	Tweet.findById(id, callback);
+module.exports.getTweetByCampaignID = (id, page, callback) => {
+    Tweet.find({"_campaignid": id }, callback).skip(50 * (page-1)).limit(50);
 }
 
 // Delete Campaign
 module.exports.removeTweet = (id, callback) => {
-	var query = {
-		_id: id
-	};
-	Tweet.remove(query, callback);
+    var query = {
+        _id: id
+    };
+    Tweet.remove(query, callback);
 }
 
 //Additional Twitter API Tweet Object Parameters

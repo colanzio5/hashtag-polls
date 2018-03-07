@@ -38,8 +38,8 @@ app.get('/api/tweets', (req, res) => {
 	});
 });
 
-app.get('/api/tweets/:_id', (req, res) => {
-	Tweet.getTweetByCampaignID(req.params._id, (err, tweet) => {
+app.get('/api/tweets/:_id/:page', (req, res) => {
+	Tweet.getTweetByCampaignID(req.params._id, req.params.page, (err, tweet) => {
 		if (err)
 			throw err;
 		res.json(tweet);

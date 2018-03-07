@@ -35,8 +35,38 @@
     </div>
 </div>
 
+
+<div ng-controller="CampaignsController" ng-init="getTweets(1)">
+    <table>
+        <tr class="table-2-row" dir-paginate="tweet in tweets | itemsPerPage: 50" total-items="number_tweets" current-page="pagination.current">
+            <td>
+                <img ng-src="{{ tweet.user_profile_image_url }}" />
+            </td>
+            <td>
+                <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
+            </td>
+            <td>
+                <p>{{tweet.text}}
+                    <p></p>
+            </td>
+            <td>{{tweet.created_at}}</td>
+            <td>
+                <td ng-if="tweet.retweet_count != 0" class="retweet">
+                    <i class="fa fa-retweet"></i> {{tweet.retweet_count}}
+                    </i>
+                </td>
+            </td>
+            <td>
+                <a href="https://twitter.com/{{tweet.user_id_str}}/status/{{tweet.id_str}}">link</a>
+            </td>
+        </tr>
+    </table>
+
+    <dir-pagination-controls on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
+</div>
+
 <!-- Table 2 -->
-<div class="table-2-recents exportable">
+<!-- <div class="table-2-recents exportable" ng-init="getTweets(1)">
     <div class="table-2-row  table-2-head">
         Recent Tweets
         <input id="query" ng-model="query" type="text" class="table-2-search" name="" placeholder="Search...">
@@ -46,34 +76,12 @@
     <ul>
         <li>
             <div class="table-2-row" dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query">
-                <div>
-                    <img ng-src="{{ tweet.user_profile_image_url }}" />
-                </div>
-                <div>
-                    <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
-                </div>
-                <div>
-                    <p>{{tweet.text}}
-                        <p></p>
-                </div>
-                <div>{{tweet.created_at}}</div>
-                <div>
-                    <div ng-if="tweet.retweet_count != 0" class="retweet">
-                        <i class="fa fa-retweet"></i> {{tweet.retweet_count}}
-                        </i>
-                    </div>
-                </div>
-                <div>
-                    <a href="https://twitter.com/{{tweet.user_id_str}}/status/{{tweet.id_str}}">link</a>
-                </div>
+
             </div>
         </li>
     </ul>
-
-    <dir-pagination-controls [max-size="" ] [direction-links="" ] [boundary-links="" ] [on-page-change="" ] [pagination-id=""
-        ] [template-url="" ] [auto-hide="" ]>
-    </dir-pagination-controls>
-</div>
+    <dir-pagination-controls></dir-pagination-controls>
+</div> -->
 </div>
 
 
