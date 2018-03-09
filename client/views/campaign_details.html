@@ -4,16 +4,21 @@
         border-collapse: collapse;
         width: 100%;
     }
-    
-    #customers td, #customers th {
+
+    #customers td,
+    #customers th {
         border: 1px solid #ddd;
         padding: 8px;
     }
-    
-    #customers tr:nth-child(even){background-color: #f2f2f2;}
-    
-    #customers tr:hover {background-color: #ddd;}
-    
+
+    #customers tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    #customers tr:hover {
+        background-color: #ddd;
+    }
+
     #customers th {
         padding-top: 12px;
         padding-bottom: 12px;
@@ -21,7 +26,15 @@
         background-color: #4CAF50;
         color: white;
     }
-    </style>
+</style>
+
+<!-- <nav class="col-sm-3 col-md-2 hidden-xs-down bg-faded sidebar">
+        <ul class="nav nav-pills flex-column" ng-repeat="w in campaign.frequent_words">
+            <ul class="list-group">
+                <li>{{w.word}} - {{w.count}}</li>
+            </ul>
+        </ul>
+    </nav> -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
 <a href="#/campaigns">
@@ -59,54 +72,47 @@
         </h6>
     </div>
 </div>
-
-<div ng-controller="CampaignsController" ng-init="getTweets(1)">
-        <input id="query" ng-model="query" type="text" class="table-2-search" name="" placeholder="Search...">
-    <table id="customers">
-        <tr dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query" total-items="number_tweets" current-page="pagination.current">
-            <td>
-                <img ng-src="{{ tweet.user_profile_image_url }}" />
-            </td>
-            <td>
-                <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
-            </td>
-            <td>
-                <p>{{tweet.text}}
-                    <p></p>
-            </td>
-            <td>{{tweet.created_at}}</td>
-            <td>
-                <td class="retweet">
-                    <i class="fa fa-retweet"></i> {{tweet.retweet_count}}
-                    </i>
+<div class="table-responsive" ng-init="getTweets(1)">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Sentiment
+                    <br>score|comparative
+                </th>
+                <th>User</th>
+                <th>Text</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query" total-items="number_tweets" current-page="pagination.current">
+                <td>
+                    <p>{{tweet.sentiment.score}} || {{tweet.sentiment.comparative}}</p>
                 </td>
-            </td>
-            <td>
-                <a href="https://twitter.com/{{tweet.user_id_str}}/status/{{tweet.id_str}}">link</a>
-            </td>
-        </tr>
+                <td>
+                    <img ng-src="{{ tweet.user_profile_image_url }}" />
+                </td>
+                <td>
+                    <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
+                </td>
+                <td>
+                    <p>{{tweet.text}}
+                        <p></p>
+                </td>
+                <td>{{tweet.created_at}}</td>
+                <td>
+                    <td class="retweet">
+                        <i class="fa fa-retweet"></i> {{tweet.retweet_count}}
+                        </i>
+                    </td>
+                </td>
+                <td>
+                    <a href="https://twitter.com/{{tweet.user_id_str}}/status/{{tweet.id_str}}">link</a>
+                </td>
+            </tr>
+        </tbody>
     </table>
-
     <dir-pagination-controls on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
-</div>
-
-<!-- Table 2 -->
-<!-- <div class="table-2-recents exportable" ng-init="getTweets(1)">
-    <div class="table-2-row  table-2-head">
-        Recent Tweets
-        <input id="query" ng-model="query" type="text" class="table-2-search" name="" placeholder="Search...">
-    </div>
-
-
-    <ul>
-        <li>
-            <div class="table-2-row" dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query">
-
-            </div>
-        </li>
-    </ul>
-    <dir-pagination-controls></dir-pagination-controls>
-</div> -->
 </div>
 
 

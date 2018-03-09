@@ -25,7 +25,16 @@ var tweetSchema = new mongoose.Schema({
     user_profile_background_image_url: String,
     user_profile_image_url: String,
     user_screen_name: String,
-    user_url: String
+    user_url: String,
+    sentiment: {
+        score: Number,
+        comparative: Number,
+        tokens: [String],
+        words: [String],
+        positive: [String],
+        negative:[String],
+
+    }
 });
 
 const Tweet = module.exports = mongoose.model('Tweet', tweetSchema);

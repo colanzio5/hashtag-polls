@@ -1,6 +1,8 @@
 const cron = require('node-cron');
-const mongoose = require('mongoose')
-const Twit = require('twit')
+const mongoose = require('mongoose');
+const Twit = require('twit');
+const Freq = require('wordfrequenter');
+const sentiment = require('sentiment');
 
 const T = new Twit({
     consumer_key: '3442mFKp54ciOmVUsA5oVOdVT',
@@ -21,11 +23,11 @@ function script() {
     query_campaigns();
     //start chron
     cron.schedule('* * * * *', function () {
-        console.log("Chron Job Started!")
+        console.log("Chron Job Started!");
         try {
             query_campaigns();
         } catch (e) {
-            console.log(e)
+            console.log(e);
         }
     });
 
@@ -68,26 +70,43 @@ function script() {
     function main_search(campaign) {
 
         let current_tweets = [];
-        
+        let current_text = [];
+        let tokens = [];
+        let merged = [];
+
+
         Tweet.find({
             _campaignid: campaign._id
         }, (err, res) => {
             current_tweets = res;
-            current_tweets = current_tweets.map((tweet) => {return current_tweets._id});
-            console.log("NUM TWEETS: " + current_tweets.length)
+            current_text = current_tweets.map(tweet => {
+                return tweet.text.replace(/[^a-z0-9]/gmi, " ").replace(/\s+/g, " ").split(" ");
+            });
+            if(current_text.length > 0){
+                merged = current_text.reduce(function (prev, next) {
+                    return prev.concat(next);
+                });
+            }
+            
+            let wf = new Freq(merged);
+            wf.set('string')
+            tokens = wf.list();
+            //console.log(tokens.slice(Math.max(tokens.length - 100, 1)));
         });
 
 
         //run a search using the campaign's tags
         T.get('search/tweets', {
             q: campaign.campaign_tags,
+            tweet_mode: 'extended'
         }, function (err, data, response) {
             if (err) console.log(err);
 
-            //cycle through list of tweets returned from search,
+            //cycle through list of tweets returned from search,d
             //add new tweets (not listed in current_tweet_ids) to campaign's tweet list
             data.statuses.forEach(tweet => {
-
+                let sent = sentiment(tweet.full_text);
+                console.dir(sent);
                 let new_tweet = {
                     contributors: tweet.contributors,
                     created_at: tweet.created_at,
@@ -104,7 +123,7 @@ function script() {
                     retweet_count: tweet.retweet_count,
                     retweeted: tweet.retweeted,
                     source: tweet.source,
-                    text: tweet.text,
+                    text: tweet.full_text,
                     truncated: tweet.truncated,
                     user_id_str: tweet.user.id_str,
                     user_lang: tweet.user.lang,
@@ -114,18 +133,29 @@ function script() {
                     user_profile_image_url: tweet.user.profile_image_url,
                     user_screen_name: tweet.user.screen_name,
                     user_url: tweet.user.url,
+                    sentiment: {
+                        score: sent.score,
+                        comparative: sent.comparative,
+                        tokens: sent.tokens,
+                        words: sent.words,
+                        positive: sent.positive,
+                        negative:sent.negative,
+                    }
                 }
-                if(!current_tweets.includes(new_tweet._id)){
+                if (!current_tweets.includes(new_tweet._id)) {
                     let nt = new Tweet(new_tweet);
-                    nt.save();
+                    nt.save((err) => {});
                 }
             });
+            //calculate word frequency
+
 
             // //all new tweets pulled in, update analytics here
             Campaign.findByIdAndUpdate(campaign._id, {
                 $set: {
                     //length of tweets array after new tweets added
-                    "number_tweets": current_tweets.length
+                    "number_tweets": current_tweets.length,
+                    "frequent_words": tokens.slice(Math.max(tokens.length - 100, 1))
                 }
             }, (err, res) => {
                 if (err) throw err;

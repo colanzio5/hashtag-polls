@@ -16,8 +16,10 @@
     "mongoose": "*",
     "ngcsv": "^0.2.0",
     "node-cron": "^1.2.1",
+    "sentiment": "^4.2.0",
     "twit": "^2.2.9",
-    "winston": "^2.4.0"
+    "winston": "^2.4.0",
+    "wordfrequenter": "0.0.4"
   },
   "author": "Colin Casazza",
   "license": "ISC"

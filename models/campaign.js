@@ -23,8 +23,37 @@ const campaignSchema = mongoose.Schema({
 		required: false
 	},
 	max_tweets: {
-		type: Number,
-		default: 20000
+		type: Number
+	},
+	frequent_words: {
+		type: [{
+			word: {
+				type: String,
+				required: true
+			},
+			count: {
+				type: Number,
+				required: true
+			}
+		}],
+		default: []
+	},
+	sentiment: {
+		positive: {
+			type: Number,
+			required: true,
+			default: 0
+		},
+		neutral: {
+			type: Number,
+			required: true,
+			default: 0
+		},
+		negative: {
+			type: Number,
+			required: true,
+			default: 0
+		}
 	},
 	tweet_db_id: String
 });
