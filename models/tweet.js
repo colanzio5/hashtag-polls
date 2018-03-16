@@ -53,7 +53,7 @@ module.exports.getTweetByCampaignID = (id, page, callback) => {
 // Delete Campaign
 module.exports.removeTweet = (id, callback) => {
     var query = {
-        _id: id
+        _campaignid: id
     };
     Tweet.remove(query, callback);
 }

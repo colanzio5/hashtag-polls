@@ -82,19 +82,18 @@ function script() {
             current_tweets = res;
 
             current_text = current_tweets.map(tweet => {
-                return tweet.text.replace(/[^a-z0-9]/gmi, " ").replace(/\s+/g, " ").removeStopWords().split(" ");
+                return tweet.text.replace(/[^a-z0-9]/gmi, " ").replace(/\s+/g, " ").removeStopWords().toLowerCase().split(" ");
             });
 
             current_text = [].concat.apply([], current_text);
 
             merged = current_text.filter(e => {
-                return e.length > 1;
+                return e.length > 2;
             });
             
             let wf = new Freq(merged);
             wf.set('string')
             tokens = wf.list();
-            console.log(tokens.slice(Math.max(tokens.length - 100, 1)));
         });
 
 
@@ -108,7 +107,7 @@ function script() {
             //cycle through list of tweets returned from search,d
             //add new tweets (not listed in current_tweet_ids) to campaign's tweet list
             data.statuses.forEach(tweet => {
-                let sent = sentiment(tweet.full_text.replace(/[^a-z0-9]/gmi, " ").replace(/\s+/g, " "));
+                let sent = sentiment(tweet.full_text.replace(/RT\s*@[^:]*:/g, ''));
                 let new_tweet = {
                     contributors: tweet.contributors,
                     created_at: tweet.created_at,
@@ -172,6 +171,15 @@ String.prototype.removeStopWords = function() {
     var regex;
     var cleansed_string = this.valueOf();
     var stop_words = new Array(
+        //custom stop words
+        'RT',
+        're',
+        'co',
+        'https',
+        've',
+        'ing',
+
+        //generic stop words
         'a',
         'about',
         'above',
