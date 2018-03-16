@@ -87,7 +87,7 @@
         <tbody>
             <tr dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query" total-items="number_tweets" current-page="pagination.current">
                 <td>
-                    <p>{{tweet.sentiment.score}} || {{tweet.sentiment.comparative}}</p>
+                    <p>{{tweet.sentiment.score}} || {{tweet.sentiment.comparative | number: 5}}</p>
                 </td>
                 <td>
                     <img ng-src="{{ tweet.user_profile_image_url }}" />
@@ -113,6 +113,11 @@
         </tbody>
     </table>
     <dir-pagination-controls on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
+</div>
+
+
+<div ng-controller="CampaignsController">
+    <nvd3 options="o1" data="d1"></nvd3>
 </div>
 
 
