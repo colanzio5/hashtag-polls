@@ -1,32 +1,29 @@
-<div class="clearfix" ng-init="getCampaigns()">
-    <a href="#/campaigns/add/" class="table-1-create-button">Create New Campaign</a>
-    <br>
-    <!-- The Table -->
-
-    <div class="table-1 table-responsive">
-
-    </div>
-
-    <div class="table-1">
-        <div class="table-1-head table-1-row">
-            <div>Campaign Name</div>
-            <div>Keywords/Hashtags</div>
-            <div>Start Date</div>
-            <div>End Date</div>
-            <div>Total Tweets</div>
-            <div>Edit</div>
-        </div>
-        <div class="table-1-row" ng-repeat="campaign in campaigns">
-            <div>
-                <a href="#/campaigns/details/{{campaign._id}}">{{campaign.campaign_name}}</a>
-            </div>
-            <div>{{campaign.campaign_tags}}</div>
-            <div>{{ campaign.start_date | date:'MM/dd/yyyy' }}</div>
-            <div>{{campaign.end_date | date:'MM/dd/yyyy' }}</div>
-            <div>{{campaign.number_tweets}}</div>
-            <div>
-                <a href="#/campaigns/edit/{{campaign._id}}">Edit</button>
-            </div>
-        </div>
-    </div>
+<div class="container-fluid" ng-init="getCampaigns()">
+    <table class="table table-1">
+        <thead>
+            <tr>
+                <th>Campaign Name</th>
+                <th>Keywords/Hashtags</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Total Tweets</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody class="table-1-row" ng-repeat="campaign in campaigns">
+            <tr class="align-center">
+                <td>
+                    <a href="#/campaigns/details/{{campaign._id}}">{{campaign.campaign_name}}</a>
+                </td>
+                <td>{{campaign.campaign_tags}}</td>
+                <td>{{ campaign.start_date | date:'MM/dd/yyyy' }}</td>
+                <td>{{campaign.end_date | date:'MM/dd/yyyy' }}</td>
+                <td>{{campaign.number_tweets}}</td>
+                <td>
+                    <a href="#/campaigns/edit/{{campaign._id}}">Edit</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a class="btn-floating btn waves-effect waves-light red" href="#/campaigns/add/" ><i class="material-icons">add</i></a>
 </div>

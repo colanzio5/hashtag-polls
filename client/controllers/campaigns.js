@@ -2,6 +2,9 @@ var myApp = angular.module('tweet-tracker');
 
 myApp
 	.controller('CampaignsController', ['$scope', '$http', '$location', '$routeParams', function ($scope, $http, $location, $routeParams) {
+		
+		$scope.campaign_view = 3; 
+
 		$scope.getCampaigns = function () {
 			$http.get('/api/campaigns').success(function (response) {
 				$scope.campaigns = response;
@@ -39,7 +42,7 @@ myApp
 						x: function(d){return d.word;},
 						y: function(d){return d.count;},
 						//yErr: function(d){ return [-Math.abs(d.value * Math.random() * 0.3), Math.abs(d.value * Math.random() * 0.3)] },
-						showControls: true,
+						showControls: false,
 						showValues: true,
 						duration: 500,
 						xAxis: {
@@ -55,7 +58,7 @@ myApp
 				};
 		
 				$scope.d1 = [{
-					key: "Cumulative Return",
+					key: "Number Occurences",
 					values: $scope.campaign.frequent_words
 				}]
 			});			
@@ -77,6 +80,16 @@ myApp
 				type: "text/plain;charset=utf-8"
 			});
 			saveAs(blob, "tweet_list.txt");
+		};
+
+		$scope.campaignDetailsView = function() {
+			$scope.campaign_view = 1;
+		};
+		$scope.campaignAnalyticsView = function() {
+			$scope.campaign_view = 2;
+		};
+		$scope.campaignTweetsView = function() {
+			$scope.campaign_view = 3;
 		};
 
 		$scope.addCampaign = function () {

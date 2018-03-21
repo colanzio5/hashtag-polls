@@ -5,51 +5,35 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
-  <!-- Fonts CSS -->
-  <link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700|Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
-    rel="stylesheet">
+
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
   <!-- /client/css/style.css -->
   <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 </head>
 
 <body>
 
   <!-- nav bar -->
-  <nav class="navbar navbar-default">
-    <header>
-      <!-- logo/title -->
-      <div class="header-top">
-        <a href="#/">
-          <div class="header-logo">
-            <img src="images/twitter.png">
-            <p>Tweet Tracker</p>
-          </div>
-        </a>
-      </div>
-      <!--link bar-->
-      <div class="header-links">
-        <ul>
-          <li>
-            <a href="#/campaigns/">Campaign List</a>
-          </li>
-          <li>
-            <a href="#/campaigns/add">New Campaign</a>
-          </li>
+  <nav>
+      <div class="nav-wrapper teal">
+        <a href="#!" class="brand-logo"><img src="images/twitter.png" width="40px" height="auto" style="margin-left: 20px; margin-top: 15px; margin-right: 15px"></a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="#/campaigns"><i class="material-icons">home</i></a></li>
         </ul>
       </div>
-    </header>
-  </nav>
+    </nav>
 
+  <img src="images/twitter.png" width="40px" height="auto" style="margin-left: 20px; margin-top: 15px;">
   <!-- main container -->
-  <div class="main-section clearfix">
-    <!-- models located in client/views/ -->
-    <div ng-view></div>
+  <div ng-view class="main-section container clearfix">
   </div>
-
-
-  <!-- dependencies -->
 
   <!-- bower_components -->
   <script src="/bower_components/jquery/dist/jquery.js"></script>
@@ -62,17 +46,9 @@
   <script src="/app.js"></script>
   <script src="/controllers/campaigns.js"></script>
 
-  <!-- BootStrap 4-->
-  <!-- jQuery first, then Tether, then Bootstrap JS. -->
-  <script xmlns="http://www.w3.org/1999/xhtml" async="" src="https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
-    crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
-    crossorigin="anonymous"></script>
-
-
+  <!--Import jQuery before materialize.js-->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
   <!-- it's important for d3.js -->
   <script src="./bower_components/d3/d3.js"></script>
   <script src="./bower_components/nvd3/build/nv.d3.js"></script>

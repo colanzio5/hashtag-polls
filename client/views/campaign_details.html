@@ -1,125 +1,89 @@
-<style>
-    #customers {
-        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-    }
+<div class="container-fluid" ng-init="getCampaign()" ng-controller="CampaignsController">
 
-    #customers td,
-    #customers th {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
+    <div class="card">
+        <div class="card-content">
+            <div class="card-title">
+                {{campaign.campaign_name}}
+            </div>
 
-    #customers tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">tracking: {{campaign.campaign_tags}}</li>
+                    <li class="list-group-item">current Tweets: {{campaign.number_tweets}}</li>
+                    <li class="list-group-item">max Tweets: {{campaign.max_tweets}}</li>
+                    <li class="list-group-item">start: {{campaign.start_date | date:"MM/dd/yyyy"}}</li>
+                    <li class="list-group-item">end: {{campaign.end_date | date:"MM/dd/yyyy"}}</li>
+                </ul>
+                <div class="card-action">
+                    <a href="" ng-click="export_tweets()">Export</a>
+                    <a href="#/campaigns/edit/{{campaign._id}}">Edit</a>
+                    <a href="#" ng-click="removeCampaign(campaign._id)">Delete</a>
+                </div>
+            </div>
+        </div>
 
-    #customers tr:hover {
-        background-color: #ddd;
-    }
-
-    #customers th {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        text-align: left;
-        background-color: #4CAF50;
-        color: white;
-    }
-</style>
-
-<!-- <nav class="col-sm-3 col-md-2 hidden-xs-down bg-faded sidebar">
-        <ul class="nav nav-pills flex-column" ng-repeat="w in campaign.frequent_words">
-            <ul class="list-group">
-                <li>{{w.word}} - {{w.count}}</li>
+        <div class="card-tabs">
+            <ul class="tabs tabs-fixed-width">
+                <li class="tab" class="active">
+                    <a ng-click="campaignTweetsView()">tweet list</a>
+                </li>
+                <li class="tab">
+                    <a ng-click="campaignAnalyticsView()">word count</a>
+                </li>
             </ul>
-        </ul>
-    </nav> -->
+        </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
-<a href="#/campaigns">
-    Go Back</a>
 
-<div class="table-2-section" ng-init="getCampaign()">
-    <h1>Campaign Name:
-        <span>{{campaign.campaign_name}}</span>
-    </h1>
-    <div ng-show="is_running">
-        <h1>Campaign is Running</h1>
+        <div class="card-content grey lighten-4">
+
+            <div id="tweetList" ng-show="campaign_view==3">
+                <!-- tweet list view -->
+                <div class="container-fluid tweet-view" ng-init="getTweets(1)">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <dir-pagination-controls on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
+                            <thead>
+                                <th>sentiment</th>
+                                <th>user</th>
+                                <th></th>
+                                <th>text</th>
+                                <th>date</th>
+                                
+                                <th>link</th>
+                            </thead>
+                            <tbody dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query" total-items="number_tweets" current-page="pagination.current">
+                                <tr>
+                                    <td>{{tweet.sentiment.score}} 
+                                        <br>
+                                        {{tweet.sentiment.comparative | number: 4}}
+                                    <td>
+                                        <img ng-src="{{ tweet.user_profile_image_url }}" />
+                                    </td>
+                                    <td>{{tweet.user_name}} {{tweet.user_screen_name}}</td>
+                                    <td>{{tweet.text}}</td>
+                                    <td>{{tweet.created_at}}</td>
+                                    <td>{{tweet.retweet_count}}</td>
+                                    <td>
+                                        <a href="https://twitter.com/{{tweet.user_id_str}}/status/{{tweet.id_str}}">link</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <dir-pagination-controls on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wordCount" ng-show="campaign_view==2">
+                <!-- word count view -->
+                <div class="container-fluid wc-view">
+                    <nvd3 options="o1" data="d1"></nvd3>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <!-- Table Header -->
-    <div class="table-2-headers">
-        <div class="tracking">
-            <p>Tracking:
-                <span>{{campaign.campaign_tags}}</span>
-            </p>
-        </div>
-        <div class="date">
-            <p>Tracking:
-                <span>{{campaign.start_date | date:"MM/dd/yyyy"}} - {{campaign.end_date | date:"MM/dd/yyyy"}}</span>
-            </p>
-        </div>
-        <div class="total-tweets">
-            <p>Current Tweets: {{campaign.number_tweets}}
-            </p>
-            <p>Max Tweets: {{campaign.max_tweets}}
-            </p>
-        </div>
-        <h6>
-            <a href="#/campaigns/edit/{{campaign._id}}">Edit</a> |
-            <a href="#" ng-click="removeCampaign(campaign._id)">Delete</a> |
-            <a href="" ng-click="export_tweets()">Export</a>
-        </h6>
-    </div>
-</div>
-<div class="table-responsive" ng-init="getTweets(1)">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Sentiment
-                    <br>score|comparative
-                </th>
-                <th>User</th>
-                <th>Text</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr dir-paginate="tweet in tweets | itemsPerPage: 50 | filter: query" total-items="number_tweets" current-page="pagination.current">
-                <td>
-                    <p>{{tweet.sentiment.score}} || {{tweet.sentiment.comparative | number: 5}}</p>
-                </td>
-                <td>
-                    <img ng-src="{{ tweet.user_profile_image_url }}" />
-                </td>
-                <td>
-                    <p>{{tweet.user_name}} {{tweet.user_screen_name}}</p>
-                </td>
-                <td>
-                    <p>{{tweet.text}}
-                        <p></p>
-                </td>
-                <td>{{tweet.created_at}}</td>
-                <td>
-                    <td class="retweet">
-                        <i class="fa fa-retweet"></i> {{tweet.retweet_count}}
-                        </i>
-                    </td>
-                </td>
-                <td>
-                    <a href="https://twitter.com/{{tweet.user_id_str}}/status/{{tweet.id_str}}">link</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <dir-pagination-controls on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
-</div>
 
-
-<div ng-controller="CampaignsController">
-    <nvd3 options="o1" data="d1"></nvd3>
-</div>
-
-
-<!-- <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- extra dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
