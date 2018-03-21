@@ -517,65 +517,41 @@ String.prototype.removeStopWords = function () {
 }
 
 //Main Script
-function main(){
-    getValidCampaigns()
-        .then(campaign => {
-            searchForTweets(campaign)
-                .then(res => {
-                    console.log(res)
-                })
-                .catch(error => {
-                    console.log(error)
-                });
+function main() {
+    Campaign.find().exec()
+        .then(campaigns => {
+            campaigns.forEach(campaign => {
 
-            updateAnalytics(campaign)
-                .then(res => {
-                    console.log(res)
-                })
-                .catch(error => {
-                    console.log(error)
-                });
-        })
-        .catch(error => {
-            console.log(error)
-        });
-}
+                //Determine if Campaign is Valid (return if invalid)
+                let now = new Date();
+                if (typeof campaign.max_tweets !== 'undefined' && campaign.max_tweets) {
+                    if (campaign.max_tweets <= campaign.number_tweets) {
+                        return;
+                    }
+                };
+                if (typeof campaign.start_date !== 'undefined' && campaign.start_date) {
+                    if (campaign.start_date >= now) {
+                        return;
+                    }
+                };
+                if (typeof campaign.end_date !== 'undefined' && campaign.end_date) {
+                    if (campaign.end_date <= now) {
+                        return;
+                    }
+                };
 
-//Returns Campains Within Valid Date and Time Limits
-function getValidCampaigns() {
-    return new Promise((resolve, reject) => {
-        Campaign.find().exec()
-            .then(campaigns => {
-                campaigns.forEach(campaign => {
-                    //Determine if Campaign is Valid (return if invalid)
-                    let now = new Date();
-                    if (typeof campaign.max_tweets !== 'undefined' && campaign.max_tweets) {
-                        if (campaign.max_tweets <= campaign.number_tweets) {
-                            reject("max tweets exceeded");
-                        }
-                    };
-                    if (typeof campaign.start_date !== 'undefined' && campaign.start_date) {
-                        if (campaign.start_date >= now) {
-                            reject("campaign has not started");
-                        }
-                    };
-                    if (typeof campaign.end_date !== 'undefined' && campaign.end_date) {
-                        if (campaign.end_date <= now) {
-                            reject("campaign has ended");
-                        }
-                    };
-                    resolve(campaign);
-                }).catch(err => {
-                    reject(err);
-                });
-            }).catch(err => {
-                reject(err);
+                updateAnalytics(campaign).catch(err => {console.log(err)});
+                searchForTweets(campaign).catch(err => {console.log(err)});
             });
-    });
+        });
+
 }
+
 //Searches and Updates Tweets for A Campaign
 function searchForTweets(campaign) {
     return new Promise((resolve, reject) => {
+
+        console.log("searching for new tweets: " + campaign.campaign_name);
         //get current list of campaign tweets
         let current_tweets = [];
         Tweet.find({
@@ -640,12 +616,12 @@ function searchForTweets(campaign) {
                 }
             });
         });
-
         resolve("campaign tweets updated");
     })
 }
 //Updates Analytics for A Campaign
 function updateAnalytics(campaign) {
+    console.log("updating analytics: " + campaign.campaign_name);
     return new Promise((resolve, reject) => {
         let allCampaignText = [];
         let numberTweets = 0;
