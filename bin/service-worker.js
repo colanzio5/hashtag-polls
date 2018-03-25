@@ -25,8 +25,6 @@ mongoose.connect('mongodb://localhost/campaign-list');
 
 //Begin Service Worker On Start
 main();
-
-
 cron.schedule('* * * * *', function () {
     console.log("Chron Job Started!");
     try {
@@ -35,6 +33,149 @@ cron.schedule('* * * * *', function () {
         console.log(e);
     }
 });
+
+//main src
+function main() {
+    Campaign.find().exec()
+        .then(campaigns => {
+            campaigns.forEach(campaign => {
+
+                //Determine if Campaign is Valid (return if invalid)
+                let now = new Date();
+                if (typeof campaign.max_tweets !== 'undefined' && campaign.max_tweets) {
+                    console.log(campaign.max_tweets + " | " +  campaign.number_tweets)
+                    if (campaign.max_tweets <= campaign.number_tweets) {
+                        return;
+                    }
+                }
+                if (typeof campaign.start_date !== 'undefined' && campaign.start_date) {
+                    if (campaign.start_date >= now) {
+                        return;
+                    }
+                }
+                if (typeof campaign.end_date !== 'undefined' && campaign.end_date) {
+                    if (campaign.end_date <= now) {
+                        return;
+                    }
+                }
+                console.log("valid campaign: " + campaign.campaign_name)
+                updateAnalytics(campaign).catch(err => {console.log(err)});
+                searchForTweets(campaign).catch(err => {console.log(err)});
+            });
+        });
+
+}
+
+//Searches and Updates Tweets for A Campaign
+function searchForTweets(campaign) {
+    return new Promise((resolve, reject) => {
+
+        console.log("searching for new tweets: " + campaign.campaign_name);
+        //get current list of campaign tweets
+        let current_tweets = [];
+        Tweet.find({
+            _campaignid: campaign._id
+        }, (err, res) => {
+            current_tweets = res.map(tweet => {
+                return tweet.id_str
+            });
+        });
+
+        //run a search using the campaign's tags
+        T.get('search/tweets', {
+            q: campaign.campaign_tags,
+            tweet_mode: 'extended'
+        }, (err, data, response) => {
+            if (err) reject(err);
+
+            //cycle through list of tweets returned from search,d
+            //add new tweets (not listed in current_tweet_ids) to campaign's tweet list
+            if(data.statuses){
+                data.statuses.forEach(tweet => {
+                    let sent = sentiment(tweet.full_text.replace(/RT\s*@[^:]*:/g, ''));
+                    let new_tweet = {
+                        contributors: tweet.contributors,
+                        created_at: tweet.created_at,
+                        favorited: tweet.favorited,
+                        geo: tweet.geo,
+                        _id: tweet.id_str + campaign._id,
+                        _campaignid: campaign._id,
+                        id_str: tweet.id_str,
+                        in_reply_to_screen_name: tweet.in_reply_to_screen_name,
+                        in_reply_to_status_id: tweet.in_reply_to_status_id,
+                        in_reply_to_status_id_str: tweet.in_reply_to_status_id_str,
+                        in_reply_to_user_id: tweet.in_reply_to_user_id,
+                        in_reply_to_user_id_str: tweet.in_reply_to_user_id_str,
+                        retweet_count: tweet.retweet_count,
+                        retweeted: tweet.retweeted,
+                        source: tweet.source,
+                        text: tweet.full_text,
+                        truncated: tweet.truncated,
+                        user_id_str: tweet.user.id_str,
+                        user_lang: tweet.user.lang,
+                        user_location: tweet.user.location,
+                        user_name: tweet.user.name,
+                        user_profile_background_image_url: tweet.user.user_profile_background_image_url,
+                        user_profile_image_url: tweet.user.profile_image_url,
+                        user_screen_name: tweet.user.screen_name,
+                        user_url: tweet.user.url,
+                        sentiment: {
+                            score: sent.score,
+                            comparative: sent.comparative,
+                            tokens: sent.tokens,
+                            words: sent.words,
+                            positive: sent.positive,
+                            negative: sent.negative,
+                        }
+                    }
+                    if (!current_tweets.includes(new_tweet._id)) {
+                        let nt = new Tweet(new_tweet);
+                        nt.save((res, err) => {
+                            if (err) reject(err);
+                        });
+                    }
+                });
+            }
+        }).catch(error => {
+            reject("Tweet search error: " + error);
+        });
+        resolve("campaign tweets updated");
+    })
+}
+//Updates Analytics for A Campaign
+function updateAnalytics(campaign) {
+    console.log("updating analytics: " + campaign.campaign_name);
+    return new Promise((resolve, reject) => {
+        let allCampaignText = [];
+        let numberTweets = 0;
+
+        Tweet.find({
+                _campaignid: campaign._id
+            })
+            .then(tweets => {
+                allCampaignText = tweets.map(tweet => {
+                    return tweet.text;
+                });
+                numberTweets = allCampaignText.length;
+
+            }).then(() => {
+                let parsedWordCountText = allCampaignText.join(' ').replace(/[^a-z0-9]/gmi, " ").replace(/\s+/g, " ").removeStopWords().toLowerCase();
+                let wf = new Freq(parsedWordCountText.split(' '));
+                wf.set('string');
+
+                Campaign.findByIdAndUpdate(campaign._id, {
+                    $set: {
+                        //length of tweets array after new tweets added
+                        "number_tweets": numberTweets,
+                        "frequent_words": wf.list().slice(Math.max(wf.list().length - 100, 1)),
+                    }
+                }, (err, res) => {
+                    if (err) reject(err);
+                    resolve("campaign analytics updated");
+                });
+            }).catch(err => reject(err));
+    });
+}
 
 //Script Methods
 String.prototype.removeStopWords = function () {
@@ -47,6 +188,7 @@ String.prototype.removeStopWords = function () {
     var cleansed_string = this.valueOf();
     var stop_words = new Array(
         //custom stop words
+        'rt',
         'RT',
         're',
         'co',
@@ -514,142 +656,4 @@ String.prototype.removeStopWords = function () {
         }
     }
     return cleansed_string.replace(/^\s+|\s+$/g, "");
-}
-
-//Main Script
-function main() {
-    Campaign.find().exec()
-        .then(campaigns => {
-            campaigns.forEach(campaign => {
-
-                //Determine if Campaign is Valid (return if invalid)
-                let now = new Date();
-                if (typeof campaign.max_tweets !== 'undefined' && campaign.max_tweets) {
-                    if (campaign.max_tweets <= campaign.number_tweets) {
-                        return;
-                    }
-                };
-                if (typeof campaign.start_date !== 'undefined' && campaign.start_date) {
-                    if (campaign.start_date >= now) {
-                        return;
-                    }
-                };
-                if (typeof campaign.end_date !== 'undefined' && campaign.end_date) {
-                    if (campaign.end_date <= now) {
-                        return;
-                    }
-                };
-
-                updateAnalytics(campaign).catch(err => {console.log(err)});
-                searchForTweets(campaign).catch(err => {console.log(err)});
-            });
-        });
-
-}
-
-//Searches and Updates Tweets for A Campaign
-function searchForTweets(campaign) {
-    return new Promise((resolve, reject) => {
-
-        console.log("searching for new tweets: " + campaign.campaign_name);
-        //get current list of campaign tweets
-        let current_tweets = [];
-        Tweet.find({
-            _campaignid: campaign._id
-        }, (err, res) => {
-            current_tweets = res.map(tweet => {
-                return tweet.id_str
-            });
-        });
-
-        //run a search using the campaign's tags
-        T.get('search/tweets', {
-            q: campaign.campaign_tags,
-            tweet_mode: 'extended'
-        }, (err, data, response) => {
-            if (err) reject(err);
-
-            //cycle through list of tweets returned from search,d
-            //add new tweets (not listed in current_tweet_ids) to campaign's tweet list
-            data.statuses.forEach(tweet => {
-                let sent = sentiment(tweet.full_text.replace(/RT\s*@[^:]*:/g, ''));
-                let new_tweet = {
-                    contributors: tweet.contributors,
-                    created_at: tweet.created_at,
-                    favorited: tweet.favorited,
-                    geo: tweet.geo,
-                    _id: tweet.id_str + campaign._id,
-                    _campaignid: campaign._id,
-                    id_str: tweet.id_str,
-                    in_reply_to_screen_name: tweet.in_reply_to_screen_name,
-                    in_reply_to_status_id: tweet.in_reply_to_status_id,
-                    in_reply_to_status_id_str: tweet.in_reply_to_status_id_str,
-                    in_reply_to_user_id: tweet.in_reply_to_user_id,
-                    in_reply_to_user_id_str: tweet.in_reply_to_user_id_str,
-                    retweet_count: tweet.retweet_count,
-                    retweeted: tweet.retweeted,
-                    source: tweet.source,
-                    text: tweet.full_text,
-                    truncated: tweet.truncated,
-                    user_id_str: tweet.user.id_str,
-                    user_lang: tweet.user.lang,
-                    user_location: tweet.user.location,
-                    user_name: tweet.user.name,
-                    user_profile_background_image_url: tweet.user.user_profile_background_image_url,
-                    user_profile_image_url: tweet.user.profile_image_url,
-                    user_screen_name: tweet.user.screen_name,
-                    user_url: tweet.user.url,
-                    sentiment: {
-                        score: sent.score,
-                        comparative: sent.comparative,
-                        tokens: sent.tokens,
-                        words: sent.words,
-                        positive: sent.positive,
-                        negative: sent.negative,
-                    }
-                }
-                if (!current_tweets.includes(new_tweet._id)) {
-                    let nt = new Tweet(new_tweet);
-                    nt.save((res, err) => {
-                        if (err) reject(err);
-                    });
-                }
-            });
-        });
-        resolve("campaign tweets updated");
-    })
-}
-//Updates Analytics for A Campaign
-function updateAnalytics(campaign) {
-    console.log("updating analytics: " + campaign.campaign_name);
-    return new Promise((resolve, reject) => {
-        let allCampaignText = [];
-        let numberTweets = 0;
-
-        Tweet.find({
-                _campaignid: campaign._id
-            })
-            .then(tweets => {
-                allCampaignText = tweets.map(tweet => {
-                    return tweet.text;
-                });
-                numberTweets = allCampaignText.length;
-
-            }).then(() => {
-                let parsedWordCountText = allCampaignText.join(' ').replace(/[^a-z0-9]/gmi, " ").replace(/\s+/g, " ").removeStopWords().toLowerCase();
-                let wf = new Freq(parsedWordCountText.split(' '));
-                wf.set('string');
-
-                Campaign.findByIdAndUpdate(campaign._id, {
-                    $set: {
-                        //length of tweets array after new tweets added
-                        "number_tweets": numberTweets,
-                        "frequent_words": wf.list().slice(Math.max(wf.list().length - 100, 1)),
-                    }
-                }, (err, res) => {
-                    if (err) reject(err);
-                    resolve("campaign analytics updated");
-                });
-            }).catch(err => reject(err));
-    });
 }
