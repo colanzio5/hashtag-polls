@@ -128,9 +128,7 @@ function searchForTweets(campaign) {
                     }
                     if (!current_tweets.includes(new_tweet._id)) {
                         let nt = new Tweet(new_tweet);
-                        nt.save((res, err) => {
-                            if (err) reject("Tweet search error: " + error);
-                        });
+                        nt.save().catch(error => {reject("Tweet search error: " + error);});;
                     }
                 });
             }
