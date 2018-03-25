@@ -59,8 +59,8 @@ function main() {
                     }
                 }
                 console.log("valid campaign: " + campaign.campaign_name)
-                updateAnalytics(campaign).catch(err => {console.log(err)});
-                searchForTweets(campaign).catch(err => {console.log(err)});
+                updateAnalytics(campaign).then(res => {console.log(res)}).catch(err => {console.log(err)});
+                searchForTweets(campaign).then(res => {console.log(res)}).catch(err => {console.log(err)});
             });
         });
 
@@ -69,9 +69,8 @@ function main() {
 //Searches and Updates Tweets for A Campaign
 function searchForTweets(campaign) {
     return new Promise((resolve, reject) => {
-
-        console.log("searching for new tweets: " + campaign.campaign_name);
-        //get current list of campaign tweets
+        try {
+            //get current list of campaign tweets
         let current_tweets = [];
         Tweet.find({
             _campaignid: campaign._id
@@ -86,8 +85,7 @@ function searchForTweets(campaign) {
             q: campaign.campaign_tags,
             tweet_mode: 'extended'
         }, (err, data, response) => {
-            if (err) reject(err);
-
+            if (err) reject("Tweet search error: " + error);
             //cycle through list of tweets returned from search,d
             //add new tweets (not listed in current_tweet_ids) to campaign's tweet list
             if(data.statuses){
@@ -131,20 +129,20 @@ function searchForTweets(campaign) {
                     if (!current_tweets.includes(new_tweet._id)) {
                         let nt = new Tweet(new_tweet);
                         nt.save((res, err) => {
-                            if (err) reject(err);
+                            if (err) reject("Tweet search error: " + error);
                         });
                     }
                 });
             }
-        }).catch(error => {
-            reject("Tweet search error: " + error);
         });
-        resolve("campaign tweets updated");
-    })
+        resolve(campaign.campaign_name + "campaign tweets updated");
+        } catch (error) {
+            reject("Tweet search error: " + error);
+        }
+    });
 }
 //Updates Analytics for A Campaign
 function updateAnalytics(campaign) {
-    console.log("updating analytics: " + campaign.campaign_name);
     return new Promise((resolve, reject) => {
         let allCampaignText = [];
         let numberTweets = 0;
@@ -171,7 +169,7 @@ function updateAnalytics(campaign) {
                     }
                 }, (err, res) => {
                     if (err) reject(err);
-                    resolve("campaign analytics updated");
+                    resolve(campaign.campaign_name + ": analytics updated");
                 });
             }).catch(err => reject(err));
     });
