@@ -24,8 +24,10 @@ Campaign = require('./models/campaign');
 Tweet = require('./models/tweet')
 
 // Connect to Mongoose
-mongoose.connect('mongodb://localhost/campaign-list');
-var db = mongoose.connection;
+var db = null;
+mongoose.connect('mongodb://35.233.235.205:6666/test')
+    .then(res => db = res)
+    .catch(err => console.log("DATABASE INIT ERR " + err));
 
 /**
  * TWEET LIST API
@@ -118,5 +120,5 @@ app.delete('/api/campaigns/:_id', (req, res) => {
 	});
 });
 
-app.listen(3000);
-console.log('Running on port 3000...');
+app.listen(8080);
+console.log('Running on port 8080...');
